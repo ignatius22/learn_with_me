@@ -1,0 +1,29 @@
+<div class="bg-<%= flash_color(type) %>-100 border border-<%= flash_color(type) %>-400 text-<%= flash_color(type) %>-700 px-4 py-3 rounded shadow-lg transition-all duration-300"
+     data-controller="flash"
+     data-flash-auto-hide-value="true"
+     data-flash-dismiss-after-value="5000"
+     data-action="mouseenter->flash#pauseHide mouseleave->flash#resumeHide">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center">
+      <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <% case type.to_s %>
+        <% when 'notice', 'success' %>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <% when 'alert', 'error' %>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.728-.833-2.498 0L4.732 15c-.77.833.192 2.5 1.732 2.5z" />
+        <% when 'warning' %>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.728-.833-2.498 0L4.732 15c-.77.833.192 2.5 1.732 2.5z" />
+        <% else %>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <% end %>
+      </svg>
+      <span class="text-sm font-medium"><%= message %></span>
+    </div>
+    <button data-action="click->flash#dismiss" class="ml-4 text-<%= flash_color(type) %>-500 hover:text-<%= flash_color(type) %>-700">
+      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+</div>
+

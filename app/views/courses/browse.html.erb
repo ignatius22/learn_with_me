@@ -1,0 +1,154 @@
+<% content_for :title, "Browse Courses" %>
+
+<div class="min-h-screen bg-gray-50">
+  <!-- Hero Section -->
+  <div class="bg-gradient-to-br from-blue-600 to-purple-700 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6">
+          Discover Amazing Courses
+        </h1>
+        <p class="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto">
+          Expand your skills with our carefully curated selection of courses taught by industry experts.
+        </p>
+        
+        <!-- Search Bar -->
+        <div class="max-w-2xl mx-auto">
+          <%= form_with url: courses_path, method: :get, local: true, class: "flex gap-2" do |form| %>
+            <div class="flex-1">
+              <%= form.text_field :search, 
+                    placeholder: "Search courses...", 
+                    value: params[:search],
+                    class: "w-full px-4 py-3 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-300" %>
+            </div>
+            <%= form.submit "Search", 
+                  class: "btn btn-primary bg-white text-blue-600 hover:bg-gray-100 px-6 py-3 rounded-lg font-semibold" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Featured Courses Section -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl font-bold text-gray-900 mb-4">Featured Courses</h2>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+        Start your learning journey with these popular and highly-rated courses.
+      </p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+      <% @featured_courses.each do |course| %>
+        <div class="card hover:shadow-lg transition-shadow duration-200">
+          <div class="p-6">
+            <!-- Course Image Placeholder -->
+            <div class="w-full h-48 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg mb-4 flex items-center justify-center">
+              <svg class="w-16 h-16 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+              </svg>
+            </div>
+            
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">
+              <%= link_to course.title, course_path(course), class: "hover:text-blue-600 transition-colors" %>
+            </h3>
+            
+            <p class="text-gray-600 mb-4 line-clamp-3">
+              <%= truncate(course.description, length: 120) %>
+            </p>
+            
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                  <span class="text-white text-sm font-semibold">
+                    <%= course.author.first_name[0] %><%= course.author.last_name[0] %>
+                  </span>
+                </div>
+                <span class="text-sm text-gray-600">
+                  <%= course.author.first_name %> <%= course.author.last_name %>
+                </span>
+              </div>
+              
+              <span class="text-lg font-bold text-blue-600">
+                $<%= course.price %>
+              </span>
+            </div>
+            
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-1">
+                <% 5.times do |i| %>
+                  <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                  </svg>
+                <% end %>
+                <span class="text-sm text-gray-500 ml-1">(4.8)</span>
+              </div>
+              
+              <%= link_to "View Course", course_path(course), 
+                    class: "btn btn-primary text-sm" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    
+    <!-- View All Courses Button -->
+    <div class="text-center">
+      <%= link_to "View All Courses", courses_path, 
+            class: "btn btn-primary text-lg px-8 py-3" %>
+    </div>
+  </div>
+  
+  <!-- Categories Section -->
+  <% if @categories.any? %>
+    <div class="bg-white py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-bold text-gray-900 mb-4">Explore by Instructor</h2>
+          <p class="text-lg text-gray-600">
+            Learn from experienced professionals in their fields.
+          </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <% @categories.each do |instructor_name, course_count| %>
+            <div class="card hover:shadow-md transition-shadow duration-200">
+              <div class="p-6 text-center">
+                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <span class="text-white text-xl font-bold">
+                    <%= instructor_name.first[0] %><%= instructor_name.last[0] %>
+                  </span>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                  <%= instructor_name.join(' ') %>
+                </h3>
+                <p class="text-gray-600">
+                  <%= pluralize(course_count, 'course') %> available
+                </p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  
+  <!-- Call to Action Section -->
+  <div class="bg-gradient-to-r from-blue-600 to-purple-700 text-white py-16">
+    <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold mb-4">Ready to Start Learning?</h2>
+      <p class="text-xl text-blue-100 mb-8">
+        Join thousands of students who are already advancing their careers with our courses.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <%= link_to "Browse All Courses", courses_path, 
+              class: "btn bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold" %>
+        <% unless user_signed_in? %>
+          <%= link_to "Sign Up Now", new_user_registration_path, 
+                class: "btn border-2 border-white text-white hover:bg-white hover:text-blue-600 px-8 py-3 text-lg font-semibold" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+

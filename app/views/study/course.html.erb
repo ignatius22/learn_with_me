@@ -1,0 +1,170 @@
+<% content_for :title, @course.title %>
+
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <div class="bg-white shadow-sm border-b">
+    <div class="container mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <%= link_to study_index_path, class: "text-gray-600 hover:text-gray-900" do %>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+          <% end %>
+          <h1 class="text-xl font-semibold text-gray-900"><%= @course.title %></h1>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+          <div class="text-sm text-gray-600">
+            <%= @enrollment.progress_percentage %>% Complete
+          </div>
+          <div class="w-32 bg-gray-200 rounded-full h-2">
+            <div class="bg-blue-600 h-2 rounded-full" style="width: <%= @enrollment.progress_percentage %>%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mx-auto px-6 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <!-- Course Content Sidebar -->
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-lg shadow-sm">
+          <div class="p-4 border-b">
+            <h2 class="font-semibold text-gray-900">Course Content</h2>
+          </div>
+          
+          <div class="max-h-96 overflow-y-auto">
+            <% @sections.each do |section| %>
+              <div class="border-b last:border-b-0">
+                <div class="p-4 bg-gray-50">
+                  <h3 class="font-medium text-gray-900 text-sm"><%= section.title %></h3>
+                </div>
+                
+                <% section.lessons.ordered.each do |lesson| %>
+                  <% lesson_progress = @enrollment.lesson_progress_for(lesson) %>
+                  <%= link_to study_lesson_path(@enrollment, lesson), 
+                        class: "block p-3 hover:bg-gray-50 border-l-4 #{'border-blue-500 bg-blue-50' if lesson == @current_lesson} #{'border-green-500' if lesson_progress.status == 'completed'} #{'border-yellow-500' if lesson_progress.status == 'in_progress'} #{'border-gray-200' if lesson_progress.status == 'not_started'}" do %>
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center space-x-3">
+                        <div class="flex-shrink-0">
+                          <% if lesson_progress.status == 'completed' %>
+                            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                          <% elsif lesson_progress.status == 'in_progress' %>
+                            <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                            </svg>
+                          <% else %>
+                            <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm0-2a6 6 0 100-12 6 6 0 000 12z" clip-rule="evenodd"></path>
+                            </svg>
+                          <% end %>
+                        </div>
+                        
+                        <div class="min-w-0 flex-1">
+                          <p class="text-sm font-medium text-gray-900 truncate"><%= lesson.title %></p>
+                          <p class="text-xs text-gray-500"><%= lesson.content_type.humanize %></p>
+                        </div>
+                      </div>
+                      
+                      <% if lesson.duration_in_minutes.present? %>
+                        <span class="text-xs text-gray-500"><%= lesson.duration_in_minutes %>min</span>
+                      <% end %>
+                    </div>
+                  <% end %>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="lg:col-span-3">
+        <% if @current_lesson.present? %>
+          <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+            <!-- Welcome Header -->
+            <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6">
+              <h2 class="text-2xl font-bold mb-2">Welcome to Your Course!</h2>
+              <p class="text-blue-100">You're enrolled and ready to start learning. Let's begin your journey!</p>
+            </div>
+            
+            <!-- Course Overview -->
+            <div class="p-6">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="text-center">
+                  <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                  </div>
+                  <h3 class="font-semibold text-gray-900"><%= @enrollment.total_lessons_count %> Lessons</h3>
+                  <p class="text-sm text-gray-600">Interactive content</p>
+                </div>
+                
+                <div class="text-center">
+                  <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                  </div>
+                  <h3 class="font-semibold text-gray-900">Progress Tracking</h3>
+                  <p class="text-sm text-gray-600">Track your learning</p>
+                </div>
+                
+                <div class="text-center">
+                  <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                    </svg>
+                  </div>
+                  <h3 class="font-semibold text-gray-900">Certificate</h3>
+                  <p class="text-sm text-gray-600">Upon completion</p>
+                </div>
+              </div>
+              
+              <!-- Start Learning CTA -->
+              <div class="text-center">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">Ready to Start?</h3>
+                <p class="text-gray-600 mb-6">Begin with your first lesson or pick up where you left off.</p>
+                
+                <%= link_to study_lesson_path(@enrollment, @current_lesson), 
+                      class: "inline-flex items-center px-8 py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl" do %>
+                  <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h1m4 0h1m6-8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2M5 10h14M5 10V8a2 2 0 012-2h10a2 2 0 012 2v2M5 10v10a2 2 0 002 2h10a2 2 0 002 2V10"></path>
+                  </svg>
+                  <% if @enrollment.progress_percentage > 0 %>
+                    Continue: <%= @current_lesson.title %>
+                  <% else %>
+                    Start: <%= @current_lesson.title %>
+                  <% end %>
+                <% end %>
+                
+                <p class="text-sm text-gray-500 mt-4">
+                  Lesson <%= @sections.sum { |s| s.lessons.where('position < ?', @current_lesson.position).count } + 1 %> of <%= @enrollment.total_lessons_count %>
+                </p>
+              </div>
+            </div>
+          </div>
+        <% else %>
+          <div class="bg-white rounded-lg shadow-sm p-8">
+            <div class="text-center">
+              <svg class="mx-auto h-12 w-12 text-green-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <h2 class="text-2xl font-bold text-gray-900 mb-4">Congratulations!</h2>
+              <p class="text-gray-600 mb-8">You've completed all lessons in this course.</p>
+              
+              <%= link_to "View Certificate", "#", 
+                    class: "inline-flex items-center px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+

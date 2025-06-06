@@ -1,0 +1,67 @@
+<% content_for :title, "My Learning" %>
+
+<div class="container mx-auto px-6 py-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">My Learning</h1>
+    <p class="text-gray-600">Continue your learning journey</p>
+  </div>
+
+  <% if @enrollments.any? %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @enrollments.each do |enrollment| %>
+        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+          <div class="aspect-video bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+            <h3 class="text-white font-semibold text-lg text-center px-4"><%= enrollment.course.title %></h3>
+          </div>
+          
+          <div class="p-6">
+            <div class="mb-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm text-gray-600">Progress</span>
+                <span class="text-sm font-medium text-gray-900"><%= enrollment.progress_percentage %>%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-blue-600 h-2 rounded-full" style="width: <%= enrollment.progress_percentage %>%"></div>
+              </div>
+            </div>
+            
+            <div class="flex items-center justify-between text-sm text-gray-600 mb-4">
+              <span><%= enrollment.completed_lessons_count %> / <%= enrollment.total_lessons_count %> lessons</span>
+              <span class="px-2 py-1 bg-<%= enrollment.status == 'completed' ? 'green' : 'blue' %>-100 text-<%= enrollment.status == 'completed' ? 'green' : 'blue' %>-800 rounded-full text-xs font-medium">
+                <%= enrollment.status.humanize %>
+              </span>
+            </div>
+            
+            <div class="flex space-x-3">
+              <% if enrollment.progress_percentage > 0 %>
+                <%= link_to "Continue Learning", study_course_path(enrollment), 
+                      class: "flex-1 bg-blue-600 text-white text-center py-2 px-4 rounded-md hover:bg-blue-700 transition-colors font-medium" %>
+              <% else %>
+                <%= link_to "Start Learning", study_course_path(enrollment), 
+                      class: "flex-1 bg-blue-600 text-white text-center py-2 px-4 rounded-md hover:bg-blue-700 transition-colors font-medium" %>
+              <% end %>
+              
+              <%= link_to "Course Info", course_path(enrollment.course), 
+                    class: "flex-1 bg-gray-100 text-gray-700 text-center py-2 px-4 rounded-md hover:bg-gray-200 transition-colors" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center py-16">
+      <div class="mx-auto max-w-md">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+        <h3 class="mt-4 text-lg font-medium text-gray-900">No enrolled courses</h3>
+        <p class="mt-2 text-gray-500">You haven't enrolled in any courses yet. Start learning today!</p>
+        <div class="mt-6">
+          <%= link_to "Browse Courses", browse_path, 
+                class: "inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+

@@ -1,0 +1,9 @@
+<div>
+  <ul>
+    <% @students.each do |student| %>
+        <li class="text-amber-900 text-2xl">
+           <%= student.first_name.capitalize %>
+        </li>
+    <% end %>
+  </ul>
+</div>

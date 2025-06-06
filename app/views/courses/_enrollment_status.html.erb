@@ -1,0 +1,58 @@
+<% if enrollment %>
+  <!-- Enrolled Status with Study Access -->
+  <div class="space-y-3">
+    <div class="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+      <div class="flex items-center space-x-2">
+        <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="text-sm font-medium text-green-800">Enrolled</span>
+      </div>
+      <span class="text-xs text-green-600 font-medium"><%= enrollment.progress_percentage %>% Complete</span>
+    </div>
+    
+    <!-- Progress Bar -->
+    <div class="w-full bg-gray-200 rounded-full h-2">
+      <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: <%= enrollment.progress_percentage %>%"></div>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="space-y-2">
+      <% if enrollment.progress_percentage > 0 %>
+        <%= link_to "Continue Learning", study_course_path(enrollment), 
+              class: "block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors text-center" %>
+      <% else %>
+        <%= link_to "Start Learning", study_course_path(enrollment), 
+              class: "block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors text-center" %>
+      <% end %>
+      
+      <!-- Secondary Actions -->
+      <div class="flex space-x-2">
+        <%= link_to "Go to My Learning", study_index_path, 
+              class: "flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-3 rounded-lg transition-colors text-center text-sm" %>
+        <%= button_to "Unenroll", unenroll_course_path(course), 
+              method: :delete,
+              data: { 
+                controller: "enrollment",
+                action: "click->enrollment#toggle",
+                confirm: "Are you sure you want to unenroll from this course?"
+              },
+              class: "flex-1 bg-red-50 hover:bg-red-100 text-red-600 font-medium py-2 px-3 rounded-lg transition-colors text-sm" %>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <!-- Not Enrolled - Enroll Button -->
+  <div class="text-center">
+    <%= button_to "Enroll Now", enroll_course_path(course), 
+          method: :post,
+          data: { 
+            controller: "enrollment",
+            action: "click->enrollment#toggle"
+          },
+          class: "w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors" %>
+    
+    <p class="text-xs text-gray-500 mt-2">30-day money-back guarantee</p>
+  </div>
+<% end %>
+

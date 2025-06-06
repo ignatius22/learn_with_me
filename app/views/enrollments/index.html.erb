@@ -1,0 +1,160 @@
+<% content_for :title, "My Enrollments" %>
+
+<div class="min-h-screen bg-gray-50">
+  <!-- Header Section -->
+  <div class="bg-white border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">My Enrollments</h1>
+          <p class="text-lg text-gray-600 mt-2">
+            Track your learning progress and continue your courses
+          </p>
+        </div>
+        
+        <!-- Status Filter -->
+        <div class="flex flex-wrap gap-2">
+          <%= link_to "All", enrollments_path, 
+                class: "px-4 py-2 rounded-lg text-sm font-medium transition-colors #{'bg-blue-600 text-white' if params[:status].blank?} #{'bg-gray-200 text-gray-700 hover:bg-gray-300' unless params[:status].blank?}" %>
+          <%= link_to "Enrolled", enrollments_path(status: 'enrolled'), 
+                class: "px-4 py-2 rounded-lg text-sm font-medium transition-colors #{'bg-blue-600 text-white' if params[:status] == 'enrolled'} #{'bg-gray-200 text-gray-700 hover:bg-gray-300' unless params[:status] == 'enrolled'}" %>
+          <%= link_to "Completed", enrollments_path(status: 'completed'), 
+                class: "px-4 py-2 rounded-lg text-sm font-medium transition-colors #{'bg-blue-600 text-white' if params[:status] == 'completed'} #{'bg-gray-200 text-gray-700 hover:bg-gray-300' unless params[:status] == 'completed'}" %>
+          <%= link_to "Dropped", enrollments_path(status: 'dropped'), 
+                class: "px-4 py-2 rounded-lg text-sm font-medium transition-colors #{'bg-blue-600 text-white' if params[:status] == 'dropped'} #{'bg-gray-200 text-gray-700 hover:bg-gray-300' unless params[:status] == 'dropped'}" %>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Enrollments Grid -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <% if @enrollments.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @enrollments.each do |enrollment| %>
+          <div class="card hover:shadow-lg transition-shadow duration-200">
+            <div class="p-6">
+              <!-- Course Image Placeholder -->
+              <div class="w-full h-40 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg mb-4 flex items-center justify-center">
+                <svg class="w-12 h-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                </svg>
+              </div>
+              
+              <!-- Course Info -->
+              <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                  <%= link_to enrollment.course.title, course_path(enrollment.course), 
+                        class: "hover:text-blue-600 transition-colors" %>
+                </h3>
+                
+                <div class="flex items-center space-x-2 mb-2">
+                  <div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                    <span class="text-white text-xs font-semibold">
+                      <%= enrollment.course.author.first_name[0] %><%= enrollment.course.author.last_name[0] %>
+                    </span>
+                  </div>
+                  <span class="text-sm text-gray-600">
+                    <%= enrollment.course.author.first_name %> <%= enrollment.course.author.last_name %>
+                  </span>
+                </div>
+                
+                <p class="text-gray-600 text-sm">
+                  <%= truncate(enrollment.course.description, length: 100) %>
+                </p>
+              </div>
+              
+              <!-- Status Badge -->
+              <div id="enrollment_<%= enrollment.id %>_status" class="mb-4">
+                <%= render "status_badge", enrollment: enrollment %>
+              </div>
+              
+              <!-- Progress Bar -->
+              <div class="mb-4">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-sm font-medium text-gray-700">Progress</span>
+                  <span class="text-sm text-gray-500">
+                    <% progress = case enrollment.status
+                         when 'enrolled' then 25
+                         when 'completed' then 100
+                         when 'dropped' then 0
+                         else 0
+                         end %>
+                    <%= progress %>%
+                  </span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+                       style="width: <%= progress %>%"></div>
+                </div>
+              </div>
+              
+              <!-- Enrollment Info -->
+              <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                <span>Enrolled <%= enrollment.enrollment_date.strftime("%b %d, %Y") %></span>
+                <span>$<%= enrollment.course.price %></span>
+              </div>
+              
+              <!-- Actions -->
+              <div class="flex gap-2">
+                <%= link_to "Continue Learning", enrollment_path(enrollment), 
+                      class: "btn btn-primary flex-1 text-sm" %>
+                <%= link_to "View Course", course_path(enrollment.course), 
+                      class: "btn border border-gray-300 text-gray-700 hover:bg-gray-50 flex-1 text-sm" %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      
+      <!-- Summary Stats -->
+      <div class="mt-8 bg-white rounded-lg border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Learning Summary</h3>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="text-center">
+            <div class="text-2xl font-bold text-blue-600"><%= @enrollments.count %></div>
+            <div class="text-sm text-gray-600">Total Enrollments</div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-green-600"><%= @enrollments.where(status: 'completed').count %></div>
+            <div class="text-sm text-gray-600">Completed</div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-yellow-600"><%= @enrollments.where(status: 'enrolled').count %></div>
+            <div class="text-sm text-gray-600">In Progress</div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-red-600"><%= @enrollments.where(status: 'dropped').count %></div>
+            <div class="text-sm text-gray-600">Dropped</div>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <!-- Empty State -->
+      <div class="text-center py-12">
+        <div class="text-gray-500">
+          <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+          </svg>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">
+            <% if params[:status].present? %>
+              No <%= params[:status] %> enrollments found
+            <% else %>
+              No enrollments yet
+            <% end %>
+          </h3>
+          <p class="text-gray-500 mb-6">
+            <% if params[:status].present? %>
+              You don't have any courses with <%= params[:status] %> status.
+            <% else %>
+              Start your learning journey by enrolling in some courses!
+            <% end %>
+          </p>
+          <%= link_to "Browse Courses", courses_path, 
+                class: "btn btn-primary" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+

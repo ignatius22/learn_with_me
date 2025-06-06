@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+  <head>
+    <title><%= content_for(:title) || "Learn With Me - Master New Skills Online" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="<%= content_for(:description) || 'Learn new skills with our comprehensive online courses. Join thousands of students mastering programming, design, business, and more.' %>">
+    <meta name="turbo-cache-control" content="no-cache">
+    
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    
+    <!-- SEO and Social Meta Tags -->
+    <meta property="og:title" content="<%= content_for(:title) || 'Learn With Me' %>">
+    <meta property="og:description" content="<%= content_for(:description) || 'Master new skills with our online courses' %>">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+    <!-- Stylesheets -->
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    
+    <!-- JavaScript -->
+    <%= javascript_importmap_tags %>
+    
+    
+    <!-- Additional head content -->
+    <%= yield :head %>
+  </head>
+
+  <body class="bg-gray-50 min-h-full flex flex-col antialiased">
+    <!-- Skip Navigation Link for Accessibility -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded-md z-50">
+      Skip to main content
+    </a>
+    
+    <!-- Header -->
+    <%= render "layouts/header/header" %>
+    
+    <!-- Flash Messages Container -->
+    <div id="flash_messages" class="fixed top-20 right-4 z-50 space-y-2 max-w-sm">
+      <% flash.each do |type, message| %>
+        <%= render "shared/flash_message", type: type, message: message %>
+      <% end %>
+    </div>
+    
+    <!-- Main Content -->
+    <main id="main-content" class="flex-1 focus:outline-none grow" tabindex="-1">
+      <%= yield %>
+    </main>
+    
+    <!-- Footer -->
+    <%= render "layouts/footer/footer" %>
+    
+    <!-- Loading Indicator for Turbo -->
+    <div id="loading-indicator" class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg hidden z-50">
+      <div class="flex items-center space-x-2">
+        <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span>Loading...</span>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  // Show/hide loading indicator for Turbo navigation
+  document.addEventListener('turbo:visit', () => {
+    document.getElementById('loading-indicator')?.classList.remove('hidden')
+  })
+  
+  document.addEventListener('turbo:load', () => {
+    document.getElementById('loading-indicator')?.classList.add('hidden')
+  })
+  
+  // Handle failed requests
+  document.addEventListener('turbo:before-fetch-request', (event) => {
+    // Add any global request headers here if needed
+  })
+</script>

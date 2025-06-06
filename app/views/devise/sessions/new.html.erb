@@ -1,0 +1,93 @@
+<% content_for :title, "Sign In - Learn With Me" %>
+<% content_for :description, "Sign in to your Learn With Me account to continue your learning journey" %>
+
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <div class="flex justify-center mb-4">
+        <div class="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg">
+          <svg class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+        </div>
+      </div>
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Welcome back!</h1>
+      <p class="text-gray-600">Sign in to continue your learning journey</p>
+    </div>
+
+    <!-- Sign In Form -->
+    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+      <%= form_for(resource, as: resource_name, url: session_path(resource_name), local: true, class: "space-y-6") do |f| %>
+        <!-- Email Field -->
+        <div class="space-y-2">
+          <%= f.label :email, class: "block text-sm font-medium text-gray-700" do %>
+            <div class="flex items-center space-x-2">
+              <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+              </svg>
+              <span>Email address</span>
+            </div>
+          <% end %>
+          <%= f.email_field :email, 
+              autofocus: true, 
+              autocomplete: "email",
+              class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200",
+              placeholder: "Enter your email address" %>
+        </div>
+
+        <!-- Password Field -->
+        <div class="space-y-2">
+          <%= f.label :password, class: "block text-sm font-medium text-gray-700" do %>
+            <div class="flex items-center space-x-2">
+              <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              <span>Password</span>
+            </div>
+          <% end %>
+          <%= f.password_field :password, 
+              autocomplete: "current-password",
+              class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200",
+              placeholder: "Enter your password" %>
+        </div>
+
+        <!-- Remember Me & Forgot Password -->
+        <div class="flex items-center justify-between">
+          <% if devise_mapping.rememberable? %>
+            <label class="flex items-center space-x-2 text-sm text-gray-600">
+              <%= f.check_box :remember_me, class: "h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" %>
+              <span>Remember me</span>
+            </label>
+          <% end %>
+          
+          <% if devise_mapping.recoverable? %>
+            <%= link_to "Forgot password?", new_password_path(resource_name), 
+                class: "text-sm text-blue-600 hover:text-blue-800 font-medium" %>
+          <% end %>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="space-y-4">
+          <%= f.submit "Sign In", 
+              class: "w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5" %>
+        </div>
+      <% end %>
+
+      <!-- Divider -->
+      <div class="mt-8 pt-6 border-t border-gray-200">
+        <div class="text-center">
+          <span class="text-gray-600 text-sm">Don't have an account?</span>
+          <%= link_to "Sign up", new_registration_path(resource_name), 
+              class: "ml-2 text-blue-600 hover:text-blue-800 font-medium text-sm" %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Links -->
+    <div class="mt-6 text-center">
+      <%= link_to "← Back to Home", root_path, 
+          class: "text-gray-600 hover:text-gray-800 text-sm font-medium" %>
+    </div>
+  </div>
+</div>
