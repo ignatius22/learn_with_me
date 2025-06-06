@@ -41,16 +41,76 @@
         <div class="bg-white rounded-lg shadow-sm overflow-hidden">
           <!-- Video/Content Player -->
           <div class="aspect-video bg-black relative">
-            <% if @lesson.content_type == 'video' && @lesson.content_url.present? %>
-              <video class="w-full h-full" 
-                     controls 
-                     data-lesson-player-target="videoPlayer"
-                     data-action="timeupdate->lesson-player#updateProgress ended->lesson-player#videoEnded">
-                <source src="<%= @lesson.content_url %>" type="video/mp4">
-                <p class="text-white p-4">Your browser doesn't support video playback.</p>
-              </video>
+            <% if @lesson.content_type == 'video' %>
+              <% video_url = @lesson.video_url %>
+              <% if video_url.present? %>
+                <% if @lesson.video_file.attached? %>
+                  <!-- Uploaded video file -->
+                  <video class="w-full h-full" 
+                         controls 
+                         data-lesson-player-target="videoPlayer"
+                         data-action="timeupdate->lesson-player#updateProgress ended->lesson-player#videoEnded"
+                         poster="<%= @lesson.thumbnail_url if @lesson.thumbnail_url.present? %>">
+                    <source src="<%= video_url %>" type="<%= @lesson.video_file.content_type %>">
+                    <p class="text-white p-4">Your browser doesn't support video playback.</p>
+                  </video>
+                <% elsif @lesson.video_file_url.present? && (@lesson.video_file_url.include?('youtube.com') || @lesson.video_file_url.include?('youtu.be')) %>
+                  <!-- YouTube video -->
+                  <% youtube_id = @lesson.video_file_url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/)&.captures&.first %>
+                  <% if youtube_id %>
+                    <iframe src="https://www.youtube.com/embed/<%= youtube_id %>" 
+                            class="w-full h-full" 
+                            frameborder="0" 
+                            allowfullscreen
+                            data-lesson-player-target="iframe">
+                    </iframe>
+                  <% else %>
+                    <div class="flex items-center justify-center h-full">
+                      <div class="text-center text-white">
+                        <p>Invalid YouTube URL</p>
+                      </div>
+                    </div>
+                  <% end %>
+                <% elsif @lesson.video_file_url.present? && @lesson.video_file_url.include?('vimeo.com') %>
+                  <!-- Vimeo video -->
+                  <% vimeo_id = @lesson.video_file_url.match(/vimeo\.com\/(\d+)/)&.captures&.first %>
+                  <% if vimeo_id %>
+                    <iframe src="https://player.vimeo.com/video/<%= vimeo_id %>" 
+                            class="w-full h-full" 
+                            frameborder="0" 
+                            allowfullscreen
+                            data-lesson-player-target="iframe">
+                    </iframe>
+                  <% else %>
+                    <div class="flex items-center justify-center h-full">
+                      <div class="text-center text-white">
+                        <p>Invalid Vimeo URL</p>
+                      </div>
+                    </div>
+                  <% end %>
+                <% else %>
+                  <!-- Direct video URL or other video URLs -->
+                  <video class="w-full h-full" 
+                         controls 
+                         data-lesson-player-target="videoPlayer"
+                         data-action="timeupdate->lesson-player#updateProgress ended->lesson-player#videoEnded"
+                         poster="<%= @lesson.thumbnail_url if @lesson.thumbnail_url.present? %>">
+                    <source src="<%= video_url %>" type="video/mp4">
+                    <p class="text-white p-4">Your browser doesn't support video playback.</p>
+                  </video>
+                <% end %>
+              <% else %>
+                <div class="flex items-center justify-center h-full">
+                  <div class="text-center text-white">
+                    <svg class="mx-auto h-12 w-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 002 2v8a2 2 0 002 2z"></path>
+                    </svg>
+                    <p>No video content available</p>
+                  </div>
+                </div>
+              <% end %>
             <% elsif @lesson.content_url.present? %>
-              <!-- For other content types like external videos -->
+              <!-- For other content types like external content -->
               <iframe src="<%= @lesson.content_url %>" 
                       class="w-full h-full" 
                       frameborder="0" 
@@ -63,7 +123,7 @@
                   <svg class="mx-auto h-12 w-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
                   </svg>
-                  <p>No video content available</p>
+                  <p>No content available</p>
                 </div>
               </div>
             <% end %>
@@ -76,8 +136,15 @@
               <div class="flex items-center space-x-2">
                 <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
                   <%= @lesson.content_type.humanize %>
+                  <% if @lesson.content_type == 'video' && @lesson.video_file.attached? %>
+                    <span class="ml-1 text-xs">(Uploaded)</span>
+                  <% end %>
                 </span>
-                <% if @lesson.duration_in_minutes.present? %>
+                <% if @lesson.video_duration_display && @lesson.video_duration_display != '0:00' %>
+                  <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm">
+                    <%= @lesson.video_duration_display %>
+                  </span>
+                <% elsif @lesson.duration_in_minutes.present? %>
                   <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm">
                     <%= @lesson.duration_in_minutes %> min
                   </span>

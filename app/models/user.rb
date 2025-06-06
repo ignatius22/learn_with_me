@@ -14,4 +14,8 @@ class User < ApplicationRecord
   def full_name
     student&.full_name || email.split('@').first.humanize
   end
+
+  def admin?
+    student&.role&.name == 'admin'
+  end
 end

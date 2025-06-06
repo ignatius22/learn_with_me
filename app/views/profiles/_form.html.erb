@@ -1,0 +1,66 @@
+<div class="bg-white rounded-lg shadow-sm border p-6">
+  <h2 class="text-xl font-semibold text-gray-900 mb-6">Edit Profile</h2>
+  
+  <%= form_with model: student, url: profile_path, method: :patch, local: false, 
+                class: "space-y-6", 
+                data: { turbo_frame: "profile_form" } do |form| %>
+    
+    <% if student.errors.any? %>
+      <div class="bg-red-50 border border-red-200 rounded-md p-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-red-800">Please fix the following errors:</h3>
+            <div class="mt-2 text-sm text-red-700">
+              <ul class="list-disc pl-5 space-y-1">
+                <% student.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <div>
+        <%= form.label :first_name, class: "block text-sm font-medium text-gray-700" %>
+        <%= form.text_field :first_name, 
+                            class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
+                            placeholder: "Enter your first name" %>
+      </div>
+      
+      <div>
+        <%= form.label :last_name, class: "block text-sm font-medium text-gray-700" %>
+        <%= form.text_field :last_name, 
+                            class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
+                            placeholder: "Enter your last name" %>
+      </div>
+    </div>
+    
+    <div class="bg-gray-50 p-4 rounded-md">
+      <h4 class="text-sm font-medium text-gray-900 mb-2">Account Information</h4>
+      <p class="text-sm text-gray-600">Email: <%= current_user.email %></p>
+      <p class="text-sm text-gray-500 mt-1">
+        To change your email or password, visit 
+        <%= link_to "Account Settings", edit_user_registration_path, class: "text-blue-600 hover:text-blue-500" %>
+      </p>
+    </div>
+    
+    <div class="flex items-center justify-end space-x-3 pt-6 border-t">
+      <%= link_to "Cancel", profile_path, 
+                  class: "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500",
+                  data: { turbo_frame: "profile_form" } %>
+      
+      <%= form.submit "Save Changes", 
+                      class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500",
+                      data: { disable_with: "Saving..." } %>
+    </div>
+  <% end %>
+</div>
+

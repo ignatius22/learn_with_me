@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for?(:title) ? yield(:title) + ' | ' : '' %>Learn With Me Admin</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    
+        <!-- Stylesheets -->
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="bg-gray-50">
+    <div class="min-h-screen flex">
+      <!-- Sidebar -->
+      <nav class="bg-gray-800 w-64 min-h-screen px-4 py-6">
+        <div class="flex items-center mb-8">
+          <%= link_to admin_dashboard_index_path, class: "text-white text-xl font-bold" do %>
+            📚 Admin Panel
+          <% end %>
+        </div>
+        
+        <ul class="space-y-2">
+          <li>
+            <%= link_to admin_dashboard_index_path, 
+                class: "flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-md transition-colors #{'bg-gray-700 text-white' if request.path == admin_dashboard_index_path}" do %>
+              📊 Dashboard
+            <% end %>
+          </li>
+          <li>
+            <%= link_to admin_courses_path, 
+                class: "flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-md transition-colors #{'bg-gray-700 text-white' if request.path.include?('/admin/courses')}" do %>
+              📚 Courses
+            <% end %>
+          </li>
+          <li>
+            <%= link_to admin_authors_path, 
+                class: "flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-md transition-colors #{'bg-gray-700 text-white' if request.path.include?('/admin/authors')}" do %>
+              👨‍🏫 Authors
+            <% end %>
+          </li>
+          <li>
+            <%= link_to admin_video_test_index_path, 
+                class: "flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-md transition-colors #{'bg-gray-700 text-white' if request.path.include?('/admin/video_test')}" do %>
+              🎬 Video Test
+            <% end %>
+          </li>
+          <li>
+            <%= link_to root_path, 
+                class: "flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-md transition-colors" do %>
+              🏠 Back to Site
+            <% end %>
+          </li>
+        </ul>
+        
+        <div class="mt-8 pt-8 border-t border-gray-700">
+          <div class="text-gray-400 text-sm">
+            Logged in as<br>
+            <span class="text-white font-medium"><%= current_user.full_name %></span>
+          </div>
+          <%= link_to destroy_user_session_path, method: :delete, 
+              class: "mt-4 block w-full text-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors" do %>
+            Sign Out
+          <% end %>
+        </div>
+      </nav>
+      
+      <!-- Main Content -->
+      <main class="flex-1 overflow-auto">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b px-6 py-4">
+          <div class="flex items-center justify-between">
+            <h1 class="text-2xl font-semibold text-gray-900">
+              <%= content_for?(:title) ? yield(:title) : 'Admin Panel' %>
+            </h1>
+            <div class="text-sm text-gray-500">
+              <%= Date.current.strftime("%B %d, %Y") %>
+            </div>
+          </div>
+        </header>
+        
+        <!-- Flash Messages -->
+        <% flash.each do |type, message| %>
+          <div class="alert alert-<%= type == 'notice' ? 'success' : 'danger' %> mx-6 mt-4 p-4 rounded-md <%= type == 'notice' ? 'bg-green-50 border border-green-200 text-green-700' : 'bg-red-50 border border-red-200 text-red-700' %>">
+            <%= message %>
+          </div>
+        <% end %>
+        
+        <!-- Page Content -->
+        <div class="p-6">
+          <%= yield %>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
+

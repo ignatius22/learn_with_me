@@ -1,0 +1,142 @@
+<% content_for :title, 'Video Upload Testing' %>
+
+<div class="max-w-6xl mx-auto">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Video Upload Testing</h1>
+    <p class="mt-2 text-lg text-gray-600">Test video uploads and monitor processing status</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Upload Test Form -->
+    <div class="bg-white shadow rounded-lg p-6">
+      <h2 class="text-xl font-semibold mb-4">Upload Test Video</h2>
+      
+      <%= form_with model: @test_lesson, url: upload_test_admin_video_test_index_path, 
+                    local: false, multipart: true, 
+                    data: { controller: "video-upload-test", action: "submit->video-upload-test#uploadTest" }, 
+                    class: "space-y-4" do |form| %>
+        
+        <div>
+          <%= form.label :title, class: "block text-sm font-medium text-gray-700" %>
+          <%= form.text_field :title, 
+                placeholder: "Test Video #{Time.current.strftime('%H:%M:%S')}",
+                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+        </div>
+        
+        <!-- Video Upload Section -->
+        <div data-controller="video-upload" data-video-upload-max-size-value="<%= 500.megabytes %>">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Video File</label>
+          
+          <!-- Upload Dropzone -->
+          <div data-video-upload-target="dropzone" 
+               data-action="dragenter->video-upload#handleDragEnter dragleave->video-upload#handleDragLeave dragover->video-upload#handleDragOver drop->video-upload#handleDrop click->video-upload#selectFile"
+               class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 cursor-pointer transition-colors">
+            
+            <!-- Upload Prompt -->
+            <div data-video-upload-target="uploadPrompt">
+              <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <div class="mt-4">
+                <p class="text-lg font-medium text-gray-900">Drop your video here</p>
+                <p class="text-sm text-gray-500">or click to browse</p>
+                <p class="text-xs text-gray-400 mt-2">MP4, WebM, OGG, AVI, MOV, WMV up to 500MB</p>
+              </div>
+            </div>
+            
+            <!-- File Preview -->
+            <div data-video-upload-target="filePreview" class="hidden">
+              <div class="flex items-center justify-center space-x-2">
+                <svg class="h-8 w-8 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2zM3.293 7.707A1 1 0 014 7h12a1 1 0 01.707.293l2 2A1 1 0 0119 10v4a1 1 0 01-.293.707L17 16.414V14a2 2 0 00-2-2H5a2 2 0 00-2 2v2.414L1.293 14.707A1 1 0 011 14v-4a1 1 0 01.293-.707l2-2z" clip-rule="evenodd" />
+                </svg>
+                <div>
+                  <p class="font-medium" data-video-upload-target="fileName"></p>
+                  <p class="text-sm text-gray-500" data-video-upload-target="fileSize"></p>
+                </div>
+                <button type="button" 
+                        data-action="click->video-upload#removeFile"
+                        class="text-red-500 hover:text-red-700">
+                  <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <%= form.file_field :video_file, 
+                data: { video_upload_target: "fileInput", action: "change->video-upload#handleFileSelect" },
+                accept: "video/*",
+                class: "hidden" %>
+        </div>
+        
+        <div class="flex space-x-4">
+          <%= form.submit "Upload Test Video", 
+                class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50",
+                data: { video_upload_test_target: "submitButton" } %>
+          
+          <button type="button" 
+                  data-action="click->video-upload-test#clearResults"
+                  class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700">
+            Clear Results
+          </button>
+        </div>
+      <% end %>
+      
+      <!-- Upload Results -->
+      <div data-video-upload-test-target="results" class="hidden mt-6 p-4 rounded-md"></div>
+    </div>
+    
+    <!-- Processing Status -->
+    <div class="bg-white shadow rounded-lg p-6">
+      <h2 class="text-xl font-semibold mb-4">Processing Status</h2>
+      
+      <div data-video-upload-test-target="statusContainer" class="space-y-4">
+        <p class="text-gray-500">Upload a video to see processing status...</p>
+      </div>
+      
+      <button type="button" 
+              data-action="click->video-upload-test#checkProcessingStatus" 
+              data-video-upload-test-target="statusButton"
+              class="hidden mt-4 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+        Check Status
+      </button>
+    </div>
+  </div>
+  
+  <!-- Recent Uploads -->
+  <div class="mt-8 bg-white shadow rounded-lg p-6">
+    <h2 class="text-xl font-semibold mb-4">Recent Video Uploads</h2>
+    
+    <% if @existing_videos.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <% @existing_videos.each do |lesson| %>
+          <div class="border rounded-lg p-4">
+            <h3 class="font-medium text-gray-900"><%= lesson.title %></h3>
+            <p class="text-sm text-gray-500">Duration: <%= lesson.video_duration_display %></p>
+            <p class="text-sm text-gray-500">Size: <%= number_to_human_size(lesson.video_file_size) if lesson.video_file_size %></p>
+            
+            <% if lesson.video_thumbnail.attached? %>
+              <div class="mt-2">
+                <%= image_tag lesson.thumbnail_url, 
+                    class: "w-full h-24 object-cover rounded", 
+                    alt: "Thumbnail for #{lesson.title}" %>
+              </div>
+            <% end %>
+            
+            <% if lesson.video_file.attached? %>
+              <%= link_to "View Video", lesson.video_url, 
+                  target: "_blank",
+                  class: "mt-2 inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded text-sm" %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-gray-500">No video uploads yet. Upload your first test video above!</p>
+    <% end %>
+  </div>
+</div>
+

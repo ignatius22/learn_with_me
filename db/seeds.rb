@@ -118,6 +118,25 @@ end
 
 puts "✅ Created #{Course.count} courses"
 
+# Create Admin User
+puts "👑 Creating admin user..."
+admin_role = Role.find_by!(name: 'admin')
+
+# Create admin user
+admin_user = User.find_or_create_by!(email: 'admin@learnwithme.com') do |u|
+  u.password = 'admin123'
+  u.password_confirmation = 'admin123'
+end
+
+# Create admin student profile
+Student.find_or_create_by!(user: admin_user) do |admin|
+  admin.first_name = 'Admin'
+  admin.last_name = 'User'
+  admin.role = admin_role
+end
+
+puts "✅ Created admin user (admin@learnwithme.com / admin123)"
+
 # Create Users and Students
 puts "👤 Creating users and students..."
 student_role = Role.find_by!(name: 'student')
@@ -254,7 +273,13 @@ rails_sections.each do |section_data|
       lesson.title = lesson_data[:title]
       lesson.content_type = lesson_data[:content_type]
       lesson.duration_in_minutes = lesson_data[:duration_in_minutes]
-      lesson.text_content = "This is the content for #{lesson_data[:title]}. Here you will learn about the key concepts and practical applications."
+      
+      # Add appropriate content based on type
+      if lesson_data[:content_type] == 'video'
+        lesson.content_url = "https://example.com/videos/#{lesson_data[:title].parameterize}.mp4"
+      else
+        lesson.text_content = "This is the content for #{lesson_data[:title]}. Here you will learn about the key concepts and practical applications."
+      end
     end
   end
 end
@@ -290,7 +315,13 @@ js_sections.each do |section_data|
       lesson.title = lesson_data[:title]
       lesson.content_type = lesson_data[:content_type]
       lesson.duration_in_minutes = lesson_data[:duration_in_minutes]
-      lesson.text_content = "This is the content for #{lesson_data[:title]}. Here you will learn about the key concepts and practical applications."
+      
+      # Add appropriate content based on type
+      if lesson_data[:content_type] == 'video'
+        lesson.content_url = "https://example.com/videos/#{lesson_data[:title].parameterize}.mp4"
+      else
+        lesson.text_content = "This is the content for #{lesson_data[:title]}. Here you will learn about the key concepts and practical applications."
+      end
     end
   end
 end
@@ -331,5 +362,10 @@ puts "   Students: #{Student.count}"
 puts "   Enrollments: #{Enrollment.count}"
 puts ""
 puts "🔑 Sample login credentials:"
-puts "   Email: alice.brown@example.com"
-puts "   Password: password123"
+puts "   👑 Admin:"
+puts "      Email: admin@learnwithme.com"
+puts "      Password: admin123"
+puts ""
+puts "   👤 Student:"
+puts "      Email: alice.brown@example.com"
+puts "      Password: password123"

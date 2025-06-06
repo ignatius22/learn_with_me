@@ -56,6 +56,7 @@ Rails.application.routes.draw do
   # Admin namespace for content management
   namespace :admin do
     root 'dashboard#index'
+    resources :dashboard, only: [:index]
     
     resources :users do
       member do
@@ -78,6 +79,14 @@ Rails.application.routes.draw do
     
     resources :reviews, only: [:index, :show, :destroy]
     resources :roles
+    
+    # Video lesson management
+    resources :video_test, only: [:index] do
+      collection do
+        post :quick_upload
+        get :processing_status
+      end
+    end
     
     # Analytics and reports
     get '/analytics', to: 'analytics#index'
