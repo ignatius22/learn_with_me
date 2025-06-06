@@ -11,7 +11,7 @@
 
 ![Learn With Me Dashboard](app/assets/images/app-screenshot-dash.png)
 
-![Learn With Me Dashboard](app/assets/images/app-screenshot-course.png)
+![Learn With Me Courses](app/assets/images/app-screenshot-course.png)
 
 *Student dashboard showing course progress, continue learning feature, and course recommendations*
 
