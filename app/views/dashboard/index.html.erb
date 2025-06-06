@@ -10,32 +10,29 @@
   </div>
   
   <!-- Continue Learning Widget -->
-  <% if @continue_learning %>
+  <% if @continue_learning.present? && @continue_learning.respond_to?(:id) && @continue_learning.id.present? %>
     <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg shadow-lg p-6 mb-8 text-white">
       <div class="flex items-center justify-between">
         <div class="flex-1">
           <h2 class="text-xl font-semibold mb-2">Continue Learning</h2>
-          <h3 class="text-lg font-medium mb-1"><%= @continue_learning.course.title %></h3>
+          <h3 class="text-lg font-medium mb-1"><%= @continue_learning&.course&.title %></h3>
           <p class="text-blue-100 mb-4">Pick up where you left off</p>
           
           <!-- Progress Bar -->
           <div class="w-full bg-blue-800 bg-opacity-50 rounded-full h-2 mb-4">
-            <div class="bg-white h-2 rounded-full transition-all duration-300" style="width: <%= @continue_learning.progress_percentage %>%"></div>
+            <div class="bg-white h-2 rounded-full transition-all duration-300" style="width: <%= @continue_learning&.progress_percentage || 0 %>%"></div>
           </div>
           
           <div class="flex items-center justify-between text-sm">
-            <span><%= @continue_learning.progress_percentage %>% complete</span>
-            <span><%= @continue_learning.completed_lessons_count %> of <%= @continue_learning.total_lessons_count %> lessons</span>
+            <span><%= @continue_learning&.progress_percentage || 0 %>% complete</span>
+            <span><%= @continue_learning&.completed_lessons_count || 0 %> of <%= @continue_learning&.total_lessons_count || 0 %> lessons</span>
           </div>
         </div>
         
         <div class="ml-6">
-          <%= link_to "Continue", study_course_path(@continue_learning), 
-                class: "inline-flex items-center px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-50 transition-colors shadow-md" do %>
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h1m4 0h1m6-8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2M5 10h14M5 10V8a2 2 0 012-2h10a2 2 0 012 2v2M5 10v10a2 2 0 002 2h10a2 2 0 002 2V10"></path>
-            </svg>
-            Continue Learning
+          <% if @continue_learning&.id %>
+            <%= link_to "Continue Learning", "/study/#{@continue_learning.id}",
+                  class: "inline-flex items-center px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-50 transition-colors shadow-md" %>
           <% end %>
         </div>
       </div>

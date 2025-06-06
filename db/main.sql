@@ -116,6 +116,7 @@ CREATE TABLE enrollments (
     course_id BIGINT NOT NULL,
     enrollment_date TIMESTAMP NOT NULL DEFAULT NOW(),
     status VARCHAR(255) DEFAULT 'enrolled', -- e.g., 'enrolled', 'completed', 'dropped'
+    progress_percentage DECIMAL(5, 2) DEFAULT 0.0, -- Progress percentage (0.00 to 100.00)
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     UNIQUE (student_id, course_id) -- Ensures a student can enroll in a course only once

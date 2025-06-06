@@ -116,7 +116,8 @@ CREATE TABLE public.enrollments (
     enrollment_date timestamp(6) without time zone DEFAULT now() NOT NULL,
     status character varying DEFAULT 'enrolled'::character varying,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    progress_percentage numeric(5,2) DEFAULT 0.0
 );
 
 
@@ -807,6 +808,7 @@ ALTER TABLE ONLY public.students
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20250606165731'),
 ('20250606120552'),
 ('20250606115344'),
 ('20250606090200'),

@@ -7,6 +7,14 @@
 [![Rails Version](https://img.shields.io/badge/rails-8.0.2-red.svg)](https://rubyonrails.org/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
+## 📱 Application Preview
+
+![Learn With Me Dashboard](app/assets/images/app-screenshot-dash.png)
+
+![Learn With Me Dashboard](app/assets/images/app-screenshot-course.png)
+
+*Student dashboard showing course progress, continue learning feature, and course recommendations*
+
 ## 🌟 Features
 
 ### For Students

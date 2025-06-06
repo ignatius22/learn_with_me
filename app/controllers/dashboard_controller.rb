@@ -8,11 +8,16 @@ class DashboardController < ApplicationController
                                           .limit(5)
     
     # Find the most recently accessed course that's not completed for "Continue Learning"
-    @continue_learning = current_student.enrollments.includes(:course)
-                                       .where(status: 'enrolled')
-                                       .where('enrollments.progress_percentage < 100 OR enrollments.progress_percentage IS NULL')
-                                       .order(:updated_at)
-                                       .first
+    begin
+      @continue_learning = current_student.enrollments.includes(:course)
+                                         .where(status: 'enrolled')
+                                         .where('enrollments.progress_percentage < 100 OR enrollments.progress_percentage IS NULL')
+                                         .order(:updated_at)
+                                         .first
+    rescue StandardError => e
+      Rails.logger.error "Error loading continue learning: #{e.message}"
+      @continue_learning = nil
+    end
     
     @recommended_courses = Course.includes(:author)
                                 .where.not(id: current_student.courses.ids)

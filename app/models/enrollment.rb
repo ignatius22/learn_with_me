@@ -18,12 +18,24 @@ class Enrollment < ApplicationRecord
     has_many :lesson_progresses, dependent: :destroy
 
     # Helper methods for progress tracking
-    def progress_percentage
+    def calculate_progress_percentage
       total_lessons = course.lessons.count
       return 0 if total_lessons.zero?
       
       completed_lessons = lesson_progresses.completed.count
-      ((completed_lessons.to_f / total_lessons) * 100).round(1)
+      calculated_progress = ((completed_lessons.to_f / total_lessons) * 100).round(1)
+      
+      # Update the database column with the calculated value
+      current_db_value = read_attribute(:progress_percentage)
+      update_column(:progress_percentage, calculated_progress) if current_db_value != calculated_progress
+      
+      calculated_progress
+    end
+    
+    # Override progress_percentage to return the database value or calculate if nil
+    def progress_percentage
+      db_value = read_attribute(:progress_percentage)
+      db_value.presence || calculate_progress_percentage
     end
 
     def completed_lessons_count
