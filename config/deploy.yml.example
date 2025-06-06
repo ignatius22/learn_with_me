@@ -1,0 +1,96 @@
+# Name of your application. Used to uniquely configure containers.
+service: learn-with-me
+
+# Name of the container image.
+image: your-docker-username/learn-with-me
+
+# Deploy to these servers.
+servers:
+  web:
+    hosts:
+      - 192.168.0.1  # Replace with your server IP
+    labels:
+      traefik.http.routers.learn-with-me.rule: Host(`learnwithme.app`)
+      traefik.http.routers.learn-with-me.tls: true
+      traefik.http.routers.learn-with-me.tls.certresolver: letsencrypt
+  job:
+    hosts:
+      - 192.168.0.1  # Replace with your server IP
+    cmd: bin/jobs
+
+# Credentials for your image host.
+registry:
+  username: your-docker-username
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+# Inject ENV variables into containers (secrets come from .env file or ENV).
+env:
+  clear:
+    RAILS_ENV: production
+    POSTGRES_HOST: postgres
+    REDIS_URL: redis://redis:6379/0
+  secret:
+    - RAILS_MASTER_KEY
+    - POSTGRES_USER
+    - POSTGRES_PASSWORD
+    - POSTGRES_DB_PRODUCTION
+    - SECRET_KEY_BASE
+    - SMTP_HOST
+    - SMTP_PORT
+    - SMTP_USERNAME
+    - SMTP_PASSWORD
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+    - AWS_REGION
+    - AWS_S3_BUCKET
+
+# Use a different ssh user than root
+ssh:
+  user: deploy
+
+# Configure builder for faster builds
+builder:
+  cache:
+    type: registry
+    options: mode=max
+
+# Configure a custom healthcheck (default is /up on port 3000)
+healthcheck:
+  path: /health
+  port: 3000
+  max_attempts: 7
+  interval: 20s
+
+# Use accessories to deploy related services
+accessories:
+  postgres:
+    image: postgres:15-alpine
+    host: 192.168.0.1  # Replace with your server IP
+    port: 5432
+    env:
+      clear:
+        POSTGRES_DB: learn_with_me_production
+      secret:
+        - POSTGRES_USER
+        - POSTGRES_PASSWORD
+    files:
+      - config/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    directories:
+      - data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    host: 192.168.0.1  # Replace with your server IP
+    port: 6379
+    directories:
+      - data:/data
+
+# Configure rolling deploys by running tasks on old version while new one is starting
+# If you have a background job queue, make sure it can access the same DB as the web servers.
+aliases:
+  console: app exec --interactive --reuse "bin/rails console"
+  shell: app exec --interactive --reuse "bash"
+  logs: app logs --follow
+  dbc: app exec --interactive --reuse "bin/rails dbconsole"
+
