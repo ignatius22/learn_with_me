@@ -9,9 +9,9 @@
 
 ## 📱 Application Preview
 
-![Learn With Me Dashboard](app/assets/images/app-screenshot-dash.png)
+![Learn With Me Dashboard](https://ibb.co/twTFNNxg)
 
-![Learn With Me Courses](app/assets/images/app-screenshot-course.png)
+![Learn With Me Courses](https://ibb.co/Q3s6TvGy)
 
 *Student dashboard showing course progress, continue learning feature, and course recommendations*
 
