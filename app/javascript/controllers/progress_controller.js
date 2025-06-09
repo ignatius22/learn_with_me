@@ -10,6 +10,7 @@ export default class extends Controller {
   }
 
   connect() {
+
     this.updateProgress()
     if (this.animatedValue) {
       this.animateProgress()

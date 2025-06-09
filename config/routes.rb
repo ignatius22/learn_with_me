@@ -4,11 +4,18 @@ Rails.application.routes.draw do
     registrations: 'users/registrations'
   }
   
+  resource :users
+
+  
+
   root "dashboard#index"
   
   # Dashboard for authenticated users
   get '/dashboard', to: 'dashboard#index'
   
+  get '/welcome', to: 'welcome#index'
+
+
   # Student profile management
   resource :profile, only: [:show, :edit, :update]
   

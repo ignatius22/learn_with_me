@@ -35,11 +35,13 @@ export default class extends Controller {
         }
       })
       
+
       if (response.ok) {
         this.enrolledValue = true
         this.updateButtonState()
         this.animateSuccess()
-        
+
+
         // Show success message with option to start learning
         this.showSuccessWithStudyOption()
       } else {

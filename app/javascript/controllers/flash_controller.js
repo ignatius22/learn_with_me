@@ -37,7 +37,7 @@ export default class extends Controller {
   }
 
   scheduleHide() {
-    const delay = this.dismissAfterValue || 5000
+    const delay = this.dismissAfterValue || 3000
     
     setTimeout(() => {
       this.hide()

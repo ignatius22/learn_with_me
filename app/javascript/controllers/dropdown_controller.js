@@ -10,6 +10,7 @@ export default class extends Controller {
     // Close dropdown when clicking outside
     this.outsideClickHandler = this.outsideClick.bind(this)
     document.addEventListener("click", this.outsideClickHandler)
+    console.log('connected')
   }
 
   disconnect() {

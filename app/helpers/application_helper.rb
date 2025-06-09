@@ -17,7 +17,7 @@ module ApplicationHelper
   end
   
   def format_duration(duration_in_hours)
-    if duration_in_hours < 1
+    if duration_in_hours&. < 1
       "#{(duration_in_hours * 60).to_i} minutes"
     else
       "#{duration_in_hours} hours"

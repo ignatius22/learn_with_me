@@ -52,12 +52,12 @@
   </div>
   
   <!-- Courses Grid -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
     <div id="courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       <% if @courses.any? %>
         <% @courses.each do |course| %>
-          <div class="card hover:shadow-lg transition-shadow duration-200">
-            <div class="p-6">
+          <div class="card hover:shadow-md transition-shadow duration-200">
+            <div class="p-3">
               <!-- Course Image Placeholder -->
               <div class="w-full h-40 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg mb-4 flex items-center justify-center">
                 <svg class="w-12 h-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -1,8 +1,8 @@
 {
-  "files.associations": {
-    "*.html.erb": "html"
-  },
-  "emmet.includeLanguages": {
-    "html.erb": "html"
-  }
+  // "files.associations": {
+  //   "*.html.erb": "html"
+  // },
+  // "emmet.includeLanguages": {
+  //   "html.erb": "html"
+  // }
 }

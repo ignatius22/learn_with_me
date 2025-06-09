@@ -38,12 +38,26 @@
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
     color: rgb(55 65 81);
-    transition: colors 0.15s ease-in-out;
+    transition: all 0.15s ease-in-out;
+    cursor: pointer;
+    text-decoration: none;
   }
   
   .dropdown-item:hover {
     background-color: rgb(249 250 251);
     color: rgb(37 99 235);
+  }
+  
+  /* Ensure dropdown menu is above other elements */
+  [data-dropdown-target="menu"] {
+    z-index: 50;
+    transform-origin: top right;
+  }
+  
+  /* Ensure proper stacking context */
+  [data-controller="dropdown"] {
+    position: relative;
+    z-index: 40;
   }
   
   .mobile-nav-link {
